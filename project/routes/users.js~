@@ -365,13 +365,13 @@ router.post('/reset/:token', function(req, res) {
 		  text: content
 	  }, function(error, response){
 		console.log(response);
-	    if (response.statusCode == 202){
-	    	req.flash('success_msg', 'La password ha sido cambiada');
-	    	res.redirect('/users/login');
-	    }else{
-	    	req.flash('error', 'No se ha podido enviar el correo.');
+	    if(error){
+            req.flash('error', error);
 	    	res.redirect('/users/forgot');
-	    }
+        }else{
+			req.flash('success_msg', 'Recibirá un correo con las instrucciones');
+	    	res.redirect('/users/login');
+        }
 	  })
     }
   ]);

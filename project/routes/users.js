@@ -369,7 +369,7 @@ router.post('/reset/:token', function(req, res) {
             req.flash('error', error);
 	    	res.redirect('/users/forgot');
         }else{
-			req.flash('success_msg', 'Recibirá un correo con las instrucciones');
+			req.flash('success_msg', 'Su contraseña ha sido cambiada');
 	    	res.redirect('/users/login');
         }
 	  })
