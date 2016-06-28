@@ -1,0 +1,86 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title Aplicación web URJC con Open Data EMT
+    // Mobile viewport optimisation
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    // (en) Add your meta data here
+    // (de) Fuegen Sie hier ihre Meta-Daten ein
+    link(rel='stylesheet', href='../stylesheets/ol.css', type='text/css', media='all')
+    link(rel='stylesheet', href='../stylesheets/login.css')
+    script(type='text/javascript', src='../javascripts/jquery-2.2.3.js')
+    script(type='text/javascript', src='../javascripts/ol.js')
+    link(href='../stylesheets/demos/css/flexible-columns.css', rel='stylesheet', type='text/css')
+    //if lte IE 7
+      link(href='../stylesheets/yaml/core/iehacks.css', rel='stylesheet', type='text/css')
+    //if lt IE 9
+      script(src='../stylesheets/lib/html5shiv/html5shiv.js')
+  body
+    #fb-root
+    script.
+      (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.6&appId=714087085268763";
+      fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    .ym-wrapper
+      .ym-wbox
+        header
+          h1 Aplicación web URJC con Open Data EMT
+          img#logo(src='../../../images/Logo.png')
+        nav#nav
+          .ym-hlist
+            ul
+              li
+                a(href='/') Datos EMT
+              li
+                a(href='/Solutions') ¿Cómo llegar?
+              li.active
+                a(href='/Experimental') Panel de control
+              li
+                a(href='/Horarios') Horarios
+              li
+                a(href='/Services') ¿Quienes somos?
+              li
+                a(href='/Contacts') Contáctanos
+        main
+          .ym-column.linearize-level-2
+            .ym-g50
+              .ym-cbox
+                section#login.box.info
+                  h1='Registrarse'
+                  form( method='post')
+                    p
+                      input(type="text" name="username" value="" placeholder="Usuario")
+                    p
+                      input(type="text" name="email" value="" placeholder="email")
+                    p
+                      input(type="password" name="password" value="" placeholder="Contraseña")
+                    p
+                      input(type="password" name="password2" value="" placeholder="Confirmar contraseña")
+                    p.submit
+                      input(type="submit" name="commit" value="Registrar")
+                    br
+                    if message
+                      div#error #{message}
+        br
+        footer
+          .ym-column.linearize-level-1
+            .ym-col1
+              div
+                | © URJC 2016 – Layout based on 
+                a(href='http://www.yaml.de') YAML
+            aside.ym-col3
+              div Follow Us:
+                ul
+                  li
+                    .fb-like(data-href='https://www.facebook.com/URJCAPIEMT/', data-layout='standard', data-action='like', data-show-faces='false', data-share='true')
+                  li
+                    a.twitter-follow-button(href='https://twitter.com/EmtUrjc', data-show-count='false') Follow @EmtUrjc
+                  script.
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+    // full skip link functionality in webkit browsers
+    script(src='../yaml/core/js/yaml-focusfix.js')

@@ -1,0 +1,93 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title Aplicación web URJC con Open Data EMT
+    // Mobile viewport optimisation
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    // (en) Add your meta data here
+    // (de) Fuegen Sie hier ihre Meta-Daten ein
+    link(rel='stylesheet', href='../stylesheets/ol.css', type='text/css', media='all')
+    script(type='text/javascript', src='../javascripts/jquery-2.2.3.js')
+
+    script(type='text/javascript', src='../javascripts/ejecutar_query.js')
+    link(href='../stylesheets/demos/css/flexible-columns.css', rel='stylesheet', type='text/css')
+    //if lte IE 7
+      link(href='../stylesheets/yaml/core/iehacks.css', rel='stylesheet', type='text/css')
+    //if lt IE 9
+      script(src='../stylesheets/lib/html5shiv/html5shiv.js')
+  body
+    #fb-root
+    script.
+      (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.6&appId=714087085268763";
+      fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    .ym-wrapper
+      .ym-wbox
+        header
+          h1 Aplicación web URJC con Open Data EMT
+          img#logo(src='../../../images/Logo.png')
+        nav#nav
+          .ym-hlist
+            ul
+              li.active
+                a(href='/') Datos EMT
+              li
+                a(href='/Solutions') ¿Cómo llegar?
+              li.active
+                a(href='/Experimental') Panel de control
+              li
+                a(href='/Horarios') Horarios
+              li
+                a(href='/Services') ¿Quienes somos?
+              li
+                a(href='/Contacts') Contáctanos
+              li
+                a(href='/users/Logout') Cerrar sesión
+        main
+          .ym-column.linearize-level-1
+            .ym-col1
+              .ym-cbox
+                section.box.info
+                  h2 Buscar datos
+                  #formulario
+                    input#idStop(name='stop', type="text", value='', placeholder='Introduce la parada')
+                    br
+                    input#idLine(name='line', type="text", value='', placeholder='Introduce la línea')
+                    br
+                    input#idBus(name='bus', type="text", value='', placeholder='Introduce el número del autobús')
+                    br
+                    input#buscar(type="submit" name="commit" value="buscar")
+               #datos
+            aside.ym-col3
+              .ym-cbox
+                section.box.info
+                  h2 Ejecutar script programable
+                  input#parada(name='parada', type="text", value='', placeholder='Introduce la parada')
+                  input#tiempo(name='intervalo', type="number", value='', placeholder='Introduce el intervalo de tiempo en segundos')
+                  input#timeout(name='intervalo', type="number", value='', placeholder='Introduce el timeout en segundos')
+                  br
+                  input#submit(type="submit" name="commit" value="Ejecutar")
+        footer
+          .ym-column.linearize-level-1
+            .ym-col1
+              div
+                | © URJC 2016 – Layout based on 
+                a(href='http://www.yaml.de') YAML
+            aside.ym-col3
+              div
+                | Follow Us:
+                ul
+                  li
+                    .fb-like(data-href='https://www.facebook.com/URJCAPIEMT/', data-layout='standard', data-action='like', data-show-faces='false', data-share='true')
+                  li
+                    a.twitter-follow-button(href='https://twitter.com/EmtUrjc', data-show-count='false') Follow @EmtUrjc
+                  script.
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+    // full skip link functionality in webkit browsers
+    script(src='/stylesheets/yaml/core/js/yaml-focusfix.js')
+

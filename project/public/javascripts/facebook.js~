@@ -1,0 +1,8 @@
+$(document).ready(function(){
+	$("#facebook").click(function() {
+  		window.location.href = "/users/auth/facebook";
+	});
+	$("#twitter").click(function() {
+  		window.location.href = "/users/auth/facebook";
+	});
+});

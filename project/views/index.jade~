@@ -1,0 +1,65 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title Demo: Aplicación web URJC con Open Data EMT
+    // Mobile viewport optimisation
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    // (en) Add your meta data here
+    // (de) Fuegen Sie hier ihre Meta-Daten ein
+    link(rel='stylesheet', href='../public/stylesheets/ol.css', type='text/css', media='all')
+    script(type='text/javascript', src='../public/javascripts/jquery-2.2.3.js')
+    script(type='text/javascript', src='../public/javascripts/logout.js')
+    script(type='text/javascript', src='../public/javascripts/ol.js')
+    link(href='../public/stylesheets/demos/css/flexible-columns.css', rel='stylesheet', type='text/css')
+    //if lte IE 7
+      link(href='../public/stylesheetsyaml/core/iehacks.css', rel='stylesheet', type='text/css')
+    //if lt IE 9
+      script(src='../public/stylesheets/lib/html5shiv/html5shiv.js')
+  body
+    .ym-wrapper
+      .ym-wbox
+        header
+          h1 Aplicación web URJC con Open Data EMT
+          img#logo(src='../../../images/Logo.png')
+        nav#nav
+          .ym-hlist
+            ul
+              li.active
+                strong Datos EMT
+              li
+                a(href='#') ¿Cómo llegar?
+              li
+                a(href='#') Panel de control
+              li
+                a(href='#') ¿Quienes somos?
+              li
+                a(href='#') Contáctanos
+        main
+          .ym-column.linearize-level-1
+            .ym-col1
+              .ym-cbox
+                section.box.info
+                  h2 Mapa de Madrid
+                  #map
+                  script(type='text/javascript', src='../javascripts/map.js')
+                #buscador
+                  input#id_stop(name='parada', ,='', value='', placeholder='Identificador de la parada')
+                  a#buscar_parada.ym-button Buscar Parada
+            aside.ym-col3
+              .ym-cbox
+                section.box.info
+                  h1 Datos de la parada
+                  .ym-contain-dt
+                    span#node
+                    br
+                    h3#name.pad_bot1
+                    br
+                    p#lines.tabla_line
+        footer
+          p
+            | © URJC 2016 – Layout based on 
+            a(href='http://www.yaml.de') YAML
+    // full skip link functionality in webkit browsers
+    script(src='../yaml/core/js/yaml-focusfix.js')
+

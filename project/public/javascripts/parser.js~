@@ -1,0 +1,10 @@
+parserNodes = function(objeto){
+	console.log(objeto.length);
+	var parada = new Object();
+	var datos = new Array();
+	for (i=0;i<=objeto.length;i++){
+		console.log(objeto[i].lines);
+		console.log(objeto[i].name);
+	}
+	return datos;
+}

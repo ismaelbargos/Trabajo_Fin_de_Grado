@@ -1,0 +1,380 @@
+serverURL="https://openbus.emtmadrid.es:9443/emt-proxy-server/last/"
+usuario="WEB.SERV.isma.bargos@gmail.com";
+clave="38F2A3E6-D982-4A84-8F85-3222DD07A9E2"
+idioma="ES" //en inglés EN
+
+var salida;
+
+// USO DE LA API
+
+//Obtener grupos de lineas
+function GetGroups1(callback){
+	$.post(
+		serverURL+"bus/GetGroups.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener lineas y su descripción
+function GetListLines(lineas, dia, callback){
+	console.log("estoy aqui");
+	$.post(
+		serverURL+"bus/GetListLines.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			SelectDate: dia,
+			Lines: lineas,
+		},
+		function(data){
+			callback(data);
+		}
+	).fail(function(data) {
+    	console.log( "error" + data );
+  	})
+}
+
+
+//Obtener informacion de paradas o de paradas especificas
+function GetNodesLines(paradas,callback){
+	$.post(
+		serverURL+"bus/GetNodesLines.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			Nodes: paradas,
+		},
+		function(data){
+			salida = data;
+			callback(data);
+		}
+	)
+}
+
+//Obtener informacion de paradas de una o varias lineas
+function GetRouteLines(lineas, dia, callback){
+
+	$.post(
+		serverURL+"bus/GetRouteLines.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			SelectDate: dia,
+			Lines: lineas,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener informacion de paradas de una o varias lineas
+function GetRouteLinesRoute(lineas, dia, callback){
+	$.post(
+		serverURL+"bus/GetRouteLinesRoute.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			SelectDate: dia,
+			Lines: lineas,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener horarios en curso de las lineas requeridas
+function GetTimesLines(lineas, dia, callback){
+	$.post(
+		serverURL+"bus/GetTimesLines.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			SelectDate: dia,
+			Lines: lineas,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener horarios de las lineas requeridas
+function GetTimeTableLines(lineas, dia, callback){
+	$.post(
+		serverURL+"bus/GetTimeTableLines.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			SelectDate: dia,
+			Lines: lineas,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener información del próximo autobus que llega a una parada
+function GetArriveStop(parada, callback){
+	$.post(
+		serverURL+"geo/GetArriveStop.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			idStop: parada,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener información de una linea en una fecha
+function GetGroups2(callback){
+	$.post(
+		serverURL+"geo/GetGroups.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener información de una linea en una fecha
+function GetInfoLine(linea, fecha, callback){
+	$.post(
+		serverURL+"geo/GetInfoLine.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			fecha: fecha,
+			line: linea,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener información ampliada de una linea en una fecha
+function GetInfoLineExtended(linea, fecha, callback){
+	$.post(
+		serverURL+"geo/GetInfoLineExtended.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			fecha: fecha,
+			line: linea,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener puntos de interes dadas unas coordenadas y un radio
+function GetPointsOfInterest(latitud, longitud, tipos, distancia, masInfo, callback){
+	$.post(
+		serverURL+"geo/GetPointsOfInterest.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			latitude: latitud,
+			longitude: longitud,
+			tipos: tipos,
+			Radius: distancia,
+			moreInfo: masInfo,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener puntos de interes por tipo
+function GetPointsOfInterestTypes(callback){
+	$.post(
+		serverURL+"geo/GetPointsOfInterestTypes.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			moreInfo: "",
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			salida=data;
+		}
+	)
+}
+
+//Obtener paradas dada una parada y un radio
+function GetStopsFromStop(parada, distancia, callback){
+	$.post(
+		serverURL+"geo/GetStopsFromStop.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			idStop: parada,
+			Radius: distancia,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener paradas dadas unas coordenadas y un radio
+function GetStopsFromXY(latitud, longitud, distancia, callback){
+	$.post(
+		serverURL+"geo/GetStopsFromXY.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			latitude: latitud,
+			longitude: longitud,
+			Radius: distancia,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Obtener paradas de una linea, opcional indicar dirección
+function GetStopsLine(linea, direccion, callback){
+	$.post(
+		serverURL+"geo/GetStopsLine.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			line: linea,
+			direction: direccion,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//salida =s a list of EMT nodes related to a location. All EMT locations are a group of stops within a target radius and the lines related to each stop in the list
+function GetStreet(descripcion, paradas, distancia, numCalle, callback){
+	$.post(
+		serverURL+"geo/GetStreet.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			description: descripcion,
+			streetNumber: numCalle,
+			Radius: distancia,
+			Stops: paradas,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+//Lista de paradas dada una coordenada y un radio
+function GetStreetFromXY(latitud, longitud, distancia, callback){
+	$.post(
+		serverURL+"geo/GetStreetFromXY.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			latitude: latitud,
+			longitude: longitud,
+			Radius: distancia,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+// Get estimate arrival time to stop and its related issues
+function GetStreetFromXY(parada, linea, texto, yntextstop, ynaudiostop, yntextestimat, ynaudioestimat, yntextinciden, ynaudioinciden, fechaincident, callback){
+	$.post(
+		serverURL+"media/GetStreetFromXY.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			idStop: parada,
+			idLine: linea,
+			text: texto,
+			Text_StopRequired_YN: yntextstop,
+			Audio_StopRequired_YN: ynaudiostop,
+			Text_EstimationsRequired_YN: yntextestimat,
+			Audio_EstimationsRequired_YN: ynaudioestimat,
+			Text_IncidencesRequired_YN: yntextinciden,
+			Audio_IncidencesRequired_YN: ynaudioinciden,
+			DateTime_Referenced_Incidencies_YYYYMMDD: fechaincident,
+			statistics: "",
+			cultureInfo: idioma,
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}
+
+// Request up to three optimal routes from one place to another using bus or walking, source and destination must be in a format known for the system, which means that should have been validated by a GetStreet call
+function GetStreetRoute(latitudInicio, longitudInicio, latitudFin, longitudFin, criterio, fecha, nombre, tiempoSL, audio, callback){
+	$.post(
+		serverURL+"media/GetStreetFromXY.php",
+		{
+			idClient: usuario,
+			passKey: clave,
+			latitudeFrom: latitudInicio,
+			longitudeFrom: longitudInicio,
+			latitudeTo: latitudFin,
+			longitudeTo: longitudFin,
+			criteriaSelection: criterio, //11 - Minimal route time, 13 - Minimal changes, 14 - Minimal walk time
+			day: fecha.day,
+			month: fecha.month,
+			year: fecha.year,
+			hour: fecha.hour,
+			minute: fecha.minute,
+			originName: nombre.inicio, //Name of the Origin point, used for the response formatting
+			destinationName: nombre.fin, //Name of the Destination point, used for the response formatting
+			timeType: tiempoSL, //S:Departure , L:Arrive
+			GenerarAudio: audio, // 1: salida = audio description
+		},
+		function(data){
+			callback(data);
+		}
+	)
+}

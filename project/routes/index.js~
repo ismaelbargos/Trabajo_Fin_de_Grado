@@ -1,0 +1,38 @@
+var express = require('express');
+var router = express.Router();
+
+/* GET home page. */
+
+router.get('/', function(req, res, next) {
+  res.render('index');
+});
+
+router.get('/login', function(req, res, next){
+  res.render('login');
+});
+
+router.get('/loginFailure', function(req, res, next) {
+  res.send('Failed to authenticate');
+});
+
+router.get('/loginSuccess', function(req, res, next) {
+  res.send('Successfully authenticated');
+});
+
+router.get('/Contacts', function(req, res, next) {
+  res.render('contacts');
+});
+
+router.get('/Company', function(req, res, next) {
+  res.render('company');
+});
+
+router.get('/Services', function(req, res, next) {
+  res.render('services');
+});
+
+router.get('/Solutions', function(req, res, next) {
+  res.render('solutions');
+});
+
+module.exports = router;

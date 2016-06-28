@@ -1,0 +1,437 @@
+$(document).ready(function(){ 
+
+	var map = null;
+	var element = document.getElementById('popup');
+	var ruta = null;
+	var animating = false;
+	var speed= 10;
+	var now;
+	var startButton = document.getElementById('start-animation');
+
+	//dibujamos el mapa
+
+	function dibujarPuntos(map,datos){
+		var vectorSource = new ol.source.Vector();
+		var vectorLayer = new ol.layer.Vector({
+			source: vectorSource
+		});
+		map.addLayer(vectorLayer);
+		var icon_url = "../images/parada.jpg";
+		var styles = {
+			icon: new ol.style.Style({
+				image: new ol.style.Icon({
+		  			anchor: [0.5, 1],
+		  			src: icon_url
+				})
+	  		})
+		};
+		if (datos.resultValues.length > 1){
+			for (i=0;i<datos.resultValues.length;i++){
+
+				var coord = [datos.resultValues[i].longitude, datos.resultValues[i].latitude];
+				var feature = new ol.Feature({
+				  type: 'place',
+				  parada: datos.resultValues[i].node,
+				  nombre: datos.resultValues[i].name,
+				  lines: datos.resultValues[i].lines,
+				  latitud: datos.resultValues[i].latitude,
+				  longitud:datos.resultValues[i].longitude,
+				  geometry: new ol.geom.Point(ol.proj.fromLonLat(coord))
+				});
+				feature.setStyle(styles.icon);
+				console.log(datos.resultValues[i].node);
+				vectorSource.addFeature(feature);
+			}
+		}else{
+			var coord = [datos.resultValues.longitude, datos.resultValues.latitude];
+			var feature = new ol.Feature({
+			  type: 'place',
+			  parada: datos.resultValues.node,
+			  nombre: datos.resultValues.name,
+			  lines: datos.resultValues.lines,
+			  latitud: datos.resultValues.latitude,
+			  longitud:datos.resultValues.longitude,
+			  geometry: new ol.geom.Point(ol.proj.fromLonLat(coord))
+			});
+			feature.setStyle(styles.icon);
+			vectorSource.addFeature(feature);
+		}
+		return map;
+	}
+
+	function dibujar_mapa(map){	
+		var view = new ol.View({
+			center: ol.proj.fromLonLat([-3.8196207,40.4378698]),
+			zoom: 10
+		});
+
+	  	map = new ol.Map({
+			interactions: ol.interaction.defaults().extend([
+         	new ol.interaction.Select({
+		       	style: new ol.style.Style({
+		        	image: new ol.style.Circle({
+		           		radius: 5,
+		           		fill: new ol.style.Fill({
+		             		color: '#FF0000'
+		           		}),
+		           		stroke: new ol.style.Stroke({
+		             		color: '#000000'
+		           		})
+		         	})
+		       })
+         	})
+       		]),
+			target: document.getElementById('map'),
+			loadTilesWhileAnimating: true,
+			view: view,
+			layers: [
+				new ol.layer.Tile({
+				source: new ol.source.OSM()
+		  		})
+			]
+		});
+
+		var geolocation = new ol.Geolocation({
+			projection: view.getProjection(),
+			tracking: true
+		});
+
+			// handle geolocation error.
+		geolocation.on('error', function(error) {
+			alert(error.message);
+		});
+
+		var accuracyFeature = new ol.Feature({
+			geometry: geolocation.getAccuracyGeometry()
+		});
+
+		var positionFeature = new ol.Feature();
+			positionFeature.setStyle(new ol.style.Style({
+				image: new ol.style.Circle({
+				radius: 6,
+				fill: new ol.style.Fill({
+					color: '#3399CC'
+				}),
+				stroke: new ol.style.Stroke({
+					color: '#fff',
+					width: 2
+				})
+			})
+		}));
+
+		geolocation.on('change:accuracyGeometry', function () {
+			accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+		});
+
+		
+		geolocation.on('change:position', function () {
+			var coordinates = geolocation.getPosition();
+			positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+		});
+
+		geolocation.on('error', function(error) {
+			alert(error.message);
+		});
+
+		new ol.layer.Vector({
+			map: map,
+			source: new ol.source.Vector({
+				features: [accuracyFeature, positionFeature]
+			})
+		});
+
+		$.post( "/getNodesLines", function( data ) {
+	  		map = dibujarPuntos(map,data);
+		});
+
+
+	return map;
+	}
+
+	
+	//Aqui obtengo la localización
+
+	map = dibujar_mapa(map);
+	map.on('click', function(evt) {
+        var feature = map.forEachFeatureAtPixel(evt.pixel,
+            function(feature) {
+              feature.setStyle(styles.icon_selected);
+              vectorSource.addFeature(feature);
+              return feature;
+            });
+        if (feature) {
+          $("#node").text(feature.get("parada"));
+          $("#name").text("Nombre parada: " + feature.get("nombre"));
+          $("#lines").text("Nº linea: " + feature.get("lines"));
+          $("#latitude").text("Latitud: " + feature.get("latitud"));
+          $("#longitude").text("Longitud: " +feature.get("longitud"));
+        } else {
+          $("#node").text("");
+          $("#name").text("")
+          $("#lines").text("");
+          $("#latitude").text("");
+          $("#longitude").text("");
+        }
+      });
+
+
+
+	//A partir de aqui trato de trazar la ruta
+	/*var vectorSource = new ol.source.Vector();
+	var vectorLayer = new ol.layer.Vector({
+	  source: vectorSource
+	});
+	map.addLayer(vectorLayer);
+
+	var icon_url = 
+		'//cdn.rawgit.com/openlayers/ol3/master/examples/data/icon.png';
+	var styles = {
+	  route: new ol.style.Style({
+		stroke: new ol.style.Stroke({
+		  width: 6, color: [40, 40, 40, 0.8]
+		})
+	  }),
+	  icon: new ol.style.Style({
+		image: new ol.style.Icon({
+		  anchor: [0.5, 1],
+		  src: icon_url
+		})
+	  })
+	};
+	var points = [];
+	var url_osrm_nearest = '//router.project-osrm.org/nearest?loc=';
+	var url_osrm_route = '//router.project-osrm.org/viaroute?loc=';
+
+	map.on('click', function(evt){
+		  var clicked = evt.coordinate;
+
+		  utils.getNearest(clicked).then(function(coord_street){
+			console.info('promise', coord_street);
+
+			utils.createFeature([coord_street[1], coord_street[0]]);
+			var points_length = points.push(coord_street);
+
+			if (points_length < 2) {
+			  return;
+			}
+			//get the route
+			var point1 = points[0].join();
+			var point2 = points[1].join();
+			utils.json(url_osrm_route +point1+'&loc='+point2).when({
+			  ready: function(response) {
+				  console.info(response);
+
+				  if (response.status != 200) {
+					  return;
+				  }
+				  points.length = 0;
+				  ruta = utils.createRoute(response.route_geometry);
+			  }
+			});
+		  });
+		});
+
+	var utils = {
+		getNearest: function(coord){
+		var coord4326 = utils.to4326(coord);
+		var lat_lon = coord4326[1] +','+ coord4326[0];
+
+		return new Promise(function(resolve, reject) {
+		  //make sure the coord is on street
+		  utils.json(url_osrm_nearest + lat_lon).when({
+		ready: function(response) {
+		  resolve(response.mapped_coordinate);
+		}
+		  });
+		});
+	  },
+	  createFeature: function(coord) {
+		var feature = new ol.Feature({
+		  type: 'place',
+		  geometry: new ol.geom.Point(ol.proj.fromLonLat(coord))
+		});
+		feature.setStyle(styles.icon);
+		vectorSource.addFeature(feature);
+	  },
+	  createRoute: function(polyline) {
+		// route is ol.geom.LineString
+		var route = new ol.format.Polyline({
+		  factor: 1e6
+		}).readGeometry(polyline, {
+		  dataProjection: 'EPSG:4326',
+		  featureProjection: 'EPSG:3857'
+		});
+		var feature = new ol.Feature({
+		  type: 'route',
+		  geometry: route
+		});
+		feature.setStyle(styles.route);
+		vectorSource.addFeature(feature);
+
+		return route;
+	  },
+	  to4326: function(coord) {
+		return ol.proj.transform([
+		  parseFloat(coord[0]), parseFloat(coord[1])
+		], 'EPSG:3857', 'EPSG:4326');
+	  },
+	  encodeUrlXhr: function(url, data){
+		if(data && typeof(data) === 'object') {
+		  var str_data = utils.toQueryString(data);
+		  url += (/\?/.test(url) ? '&' : '?') + str_data;
+		}
+		return url;
+	  },
+	  toQueryString: function(obj){
+		return Object.keys(obj).reduce(function(a, k) {
+		  a.push(
+		(typeof obj[k] === 'object') ? utils.toQueryString(obj[k]) :
+		encodeURIComponent(k) + '=' + encodeURIComponent(obj[k])
+		  );
+		  return a;
+		}, []).join('&');
+	  },
+	  json: function(url, data) {
+		var
+		  xhr = new XMLHttpRequest(),
+		  when = {},
+		  onload = function() {
+		if (xhr.status === 200) {
+		  when.ready.call(undefined, JSON.parse(xhr.response));
+		} else {
+		  console.error("Status code was " + xhr.status);
+		}
+		  },
+		  onerror = function() {
+		console.error("Can't XHR " + JSON.stringify(url));
+		  },
+		  onprogress = function() {}
+		;
+		url = utils.encodeUrlXhr(url, data);
+		xhr.open("GET", url, true);
+		xhr.setRequestHeader("Accept","application/json");
+		xhr.onload = onload;
+		xhr.onerror = onerror;
+		xhr.onprogress = onprogress;
+		xhr.send(null);
+
+		return {
+		  when: function(obj){
+		when.ready = obj.ready;
+		  }
+		};
+	  }
+	};
+
+	function startAnimation() {
+
+		var routeCoords = ruta.getCoordinates();
+		var routeLength = routeCoords.length;
+
+		var routeFeature = new ol.Feature({
+			type: 'route',
+			geometry: ruta
+		});
+		var geoMarker = new ol.Feature({
+			type: 'geoMarker',
+			geometry: new ol.geom.Point(routeCoords[0])
+		});
+		var startMarker = new ol.Feature({
+			type: 'icon',
+			geometry: new ol.geom.Point(routeCoords[0])
+		});
+		var endMarker = new ol.Feature({
+			type: 'icon',
+			geometry: new ol.geom.Point(routeCoords[routeLength - 1])
+		});
+
+		var styles = {
+			'route': new ol.style.Style({
+				stroke: new ol.style.Stroke({
+					width: 6, color: [237, 212, 0, 0.8]
+				})
+			}),
+			'icon': new ol.style.Style({
+				image: new ol.style.Icon({
+					anchor: [0.5, 1],
+					src: 'data/icon.png'
+				})
+			}),
+			'geoMarker': new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: 7,
+					snapToPixel: false,
+					fill: new ol.style.Fill({color: 'black'}),
+					stroke: new ol.style.Stroke({
+						color: 'white', width: 2
+					})
+				})
+			})
+		};
+
+		var vectorLayer = new ol.layer.Vector({
+			source: new ol.source.Vector({
+				features: [routeFeature, geoMarker, startMarker, endMarker]
+			}),
+			style: function(feature) {
+				// hide geoMarker if animation is active
+				if (animating && feature.get('type') === 'geoMarker') {
+					return null;
+				}
+				return styles[feature.get('type')];
+			}
+		});
+
+		map.addLayer(vectorLayer);
+
+		console.log(map.getLayers());
+
+		var moveFeature = function(event) {
+			var vectorContext = event.vectorContext;
+			var frameState = event.frameState;
+
+			if (animating) {
+				var elapsedTime = frameState.time - now;
+				// here the trick to increase speed is to jump some indexes
+				// on lineString coordinates
+				var index = Math.round(speed * elapsedTime / 1000);
+
+				if (index >= routeLength) {
+					stopAnimation(true);
+					return;
+				}
+
+				var currentPoint = new ol.geom.Point(routeCoords[index]);
+				var feature = new ol.Feature(currentPoint);
+				vectorContext.drawFeature(feature, styles.geoMarker);
+			}
+			// tell OL3 to continue the postcompose animation
+			map.render();
+		};
+
+		if (animating) {
+		  stopAnimation(false);
+		} else {
+		  animating = true;
+		  now = new Date().getTime();
+		  startButton.textContent = 'Cancel Animation';
+		  // hide geoMarker
+		  geoMarker.setStyle(null);
+		  // just in case you pan somewhere else
+		  map.on('postcompose', moveFeature);
+		  map.render();
+		}
+	}
+	function stopAnimation(ended) {
+		animating = false;
+		startButton.textContent = 'Start Animation';
+
+		// if animation cancelled set the marker at the beginning
+		var coord = ended ? routeCoords[routeLength - 1] : routeCoords[0];
+		/** @type {ol.geom.Point} */ /*(geoMarker.getGeometry())
+		  .setCoordinates(coord);
+		//remove listener
+		map.un('postcompose', moveFeature);
+	}
+    startButton.addEventListener('click', startAnimation, false);*/
+});

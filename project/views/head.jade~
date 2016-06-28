@@ -1,0 +1,17 @@
+head
+  title Autobuses
+  script(src='http://openlayers.org/en/v3.15.1/build/ol.js')
+  script(src='../javascripts/jquery-2.2.3.js')
+  script(src='../javascripts/cufon-yui.js')
+  script(src='../javascripts/cufon-replace.js')
+  script(src='../javascripts/Vegur_300.font.js')
+  script(src='../javascripts/PT_Sans_700.font.js')
+  script(src='../javascripts/PT_Sans_400.font.js')
+  script(src='../javascripts/tms-0.3.js')
+  script(src='../javascripts/tms_presets.js')
+  script(src='../javascripts/jquery.easing.1.3.js')
+  script(src='../javascripts/atooltip.jquery.js')
+  link(href='http://openlayers.org/en/v3.15.1/css/ol.css', rel='stylesheet')
+  link(href='../stylesheets/style.css', rel='stylesheet')
+  link(href='../stylesheets/reset.css', rel='stylesheet')
+  link(href='../stylesheets/layout.css', rel='stylesheet')
