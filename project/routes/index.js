@@ -162,10 +162,6 @@ router.post('/Contacts', function(req, res, next){
   })
 });
 
-router.get('/index', function(req, res, next) {
-  res.render('index');
-});
-
 router.get('/Company', function(req, res, next) {
   res.render('company');
 });
