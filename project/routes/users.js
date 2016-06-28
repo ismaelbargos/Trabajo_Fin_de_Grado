@@ -8,7 +8,16 @@ var router = express.Router();
 var async = require('async');
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
-var sendgrid = require('sendgrid').SendGrid("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");
+var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'urjc.api.emt@gmail.com', // Your email id
+            pass: 'TFG2016Ibp' // Your password
+        }
+});
+
+
+//var sendgrid = require('sendgrid').SendGrid("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");
 var bcrypt = require('bcryptjs');
 
 
@@ -250,7 +259,7 @@ router.post('/forgot', function(req, res, next) {
       });
     },
     function(token, user, done) {
-      var helper = require('sendgrid').mail;
+      /*var helper = require('sendgrid').mail;
 	  from_email = new helper.Email("URJC.API.EMT@gmail.com");
 	  console.log(req.body.email);
 	  to_email = new helper.Email(req.body.email);
@@ -274,7 +283,27 @@ router.post('/forgot', function(req, res, next) {
 	    	req.flash('error', 'No se ha podido enviar el correo.');
 	    	res.redirect('/users/forgot');
 	    }
-	  })
+	  })*/
+	  var content = "Estas recibiendo este correo porque alguien ha solicitado el reset de tu contraseña.\n\n" +
+          "Por favor,accede a la siguiente dirección antes de 1 hora para cambiar tu contraseña.\n\n" +
+          "http://" + req.headers.host + "/users/reset/" + token + "\n\n" +
+          "Si no has sido tú, el solicitante de esta petición, no hagas caso a este email y tu contraseña se mantendrá.\n";
+	  console.log(req.body.email);
+	  console.log(content);
+	  transporter.sendMail({
+		  from: "urjc.api.emt@gmail.com",
+		  to: req.body.email,
+		  subject: "Recordad password",
+		  text: content
+	  },function(error, response){
+        if(error){
+            req.flash('error', error);
+	    	res.redirect('/users/forgot');
+        }else{
+			req.flash('success_msg', 'Recibirá un correo con las instrucciones');
+	    	res.redirect('/users/login');
+        }
+	  });
     }
   ]);
 });
@@ -314,7 +343,7 @@ router.post('/reset/:token', function(req, res) {
       });
     },
     function(user, done) {
-      var helper = require('sendgrid').mail;
+      /*var helper = require('sendgrid').mail;
 	  from_email = new helper.Email("URJC.API.EMT@gmail.com");
 	  to_email = new helper.Email(user.local.email);
 	  subject = "Tu password ha sido cambiada";
@@ -326,14 +355,23 @@ router.post('/reset/:token', function(req, res) {
 	  request.method = 'POST';
 	  request.path = '/v3/mail/send';
 	  request.body = requestBody;
-	  sendgrid.API(request, function (response) {
-	    if (response.statusCode == 202){
-	    	req.flash('success_msg', 'La password ha sido cambiada');
-	    	res.redirect('/users/login');
-	    }else{
-	    	req.flash('error', 'No se ha podido enviar el correo.');
+	  sendgrid.API(request, function (response) {*/
+	  var content = "Hola,\n\n" +
+          "La password del usuario con email: " + user.local.email + " ha sido cambiada.\n";
+	  transporter.sendMail({
+		  from: "urjc.api.emt@gmail.com",
+		  to: user.local.email,
+		  subject: "Tu password ha sido cambiada",
+		  text: content
+	  }, function(error, response){
+		console.log(response);
+	    if(error){
+            req.flash('error', error);
 	    	res.redirect('/users/forgot');
-	    }
+        }else{
+			req.flash('success_msg', 'Recibirá un correo con las instrucciones');
+	    	res.redirect('/users/login');
+        }
 	  })
     }
   ]);

@@ -39,7 +39,7 @@ html(lang='en')
                 a(href='/') Datos EMT
               li
                 a(href='/Solutions') ¿Cómo llegar?
-              li.active
+              li
                 a(href='/Experimental') Panel de control
               li
                 a(href='/Horarios') Horarios
@@ -59,8 +59,8 @@ html(lang='en')
                     p
                       input(type='password', name='password2', value='', placeholder='Confirmar contraseña')
                     br
-                      p.submit
-                    input(type="submit" name="commit" value="Resetear")
+                    p.submit
+                      input(type="submit" name="commit" value="Resetear")
                     br
                     if message
                       div#error #{message}

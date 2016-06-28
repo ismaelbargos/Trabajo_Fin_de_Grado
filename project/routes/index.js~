@@ -2,7 +2,15 @@ var express = require('express');
 var passport = require('passport');
 var Datos = require("../models/datos")
 var router = express.Router();
-var sendgrid = require('sendgrid').SendGrid("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");
+//var sendgrid = require('sendgrid').SendGrid("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");
+var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'urjc.api.emt@gmail.com', // Your email id
+            pass: 'TFG2016Ibp' // Your password
+        }
+});
 
 var EMT = require ('API-Emtmad');
 EMT.initAPICredentials('WEB.SERV.isma.bargos@gmail.com','38F2A3E6-D982-4A84-8F85-3222DD07A9E2');
@@ -142,7 +150,7 @@ router.post('/Horarios', function(req, res, next){
 })
 
 router.post('/Contacts', function(req, res, next){
-  var helper = require('sendgrid').mail;
+  /*var helper = require('sendgrid').mail;
   from_email = new helper.Email(req.body.email);
   to_email = new helper.Email("urjc.api.emt@gmail.com");
   subject = req.body.asunto;
@@ -159,11 +167,20 @@ router.post('/Contacts', function(req, res, next){
     }else{
     	res.render('contacts');
     }
-  })
-});
+  })*/
 
-router.get('/index', function(req, res, next) {
-  res.render('index');
+  transporter.sendMail({
+	  from: req.body.email,
+	  to: 'urjc.api.emt@gmail.com',
+	  subject: req.body.asunto,
+	  text: req.body.contenido + "\r\n\r\n" + "Nombre: " + req.body.nombre + "\r\n\r\n" + "Teléfono: " +req.body.tfn
+  },function(error, response){
+        if(error){
+            return res.redirect('error', {message: error});
+        }else{
+            return res.redirect('/Contacts');
+        }
+	};
 });
 
 router.get('/Company', function(req, res, next) {
